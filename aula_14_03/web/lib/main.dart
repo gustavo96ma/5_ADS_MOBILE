@@ -9,7 +9,7 @@ void main() async {
     anonKey:
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZoanVid3RieXVncmVocXh1emVmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDEzMDgxMzAsImV4cCI6MjA1Njg4NDEzMH0.xWnTF7mppLOUkwaAY08dc4Pe3vng68qtk-_JGO396e0',
   );
-  runApp(MainApp());
+  runApp(HomePage());
 }
 
 class MainApp extends StatelessWidget {
