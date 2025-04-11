@@ -9,25 +9,31 @@ class ClassroomRepository {
     return formatClassroomData(dataBaseValues);
   }
 
-  fetchClassroomsFromDatabase() async {
+  Future<List<Map<String, dynamic>>> fetchClassroomsFromDatabase() async {
     var response = await Supabase.instance.client.from('classroom').select();
-    print(response);
+    print('response: $response');
+    return response;
   }
 
-  Future<List<ClassroomModel>> formatClassroomData(
+  List<ClassroomModel> formatClassroomData(
     List<Map<String, dynamic>> dataBaseValues,
   ) {
+    List<ClassroomModel> formatedList = [];
+
     for (var classroom in dataBaseValues) {
-      ClassroomModel(
-        classroom: classroom['classroom'],
-        capacity: classroom['capacity'],
-        computersCount: classroom['computersCount'],
-        hasAirConditioning: classroom['hasAirConditioning'],
-        hasHandicapDesk: classroom['hasHandicapDesk'],
-        hasLeftHandedDesk: classroom['hasLeftHandedDesk'],
-        hasProjector: classroom['hasProjector'],
-        hasTelevision: classroom['hasTelevision'],
+      formatedList.add(
+        ClassroomModel(
+          classroom: classroom['classroom'],
+          capacity: classroom['capacity'],
+          computersCount: classroom['computersCount'],
+          hasAirConditioning: classroom['hasAirConditioning'],
+          hasHandicapDesk: classroom['hasHandicapDesk'],
+          hasLeftHandedDesk: classroom['hasLeftHandedDesk'],
+          hasProjector: classroom['hasProjector'],
+          hasTelevision: classroom['hasTelevision'],
+        ),
       );
     }
+    return formatedList;
   }
 }

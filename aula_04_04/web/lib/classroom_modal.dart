@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:web/repositories/classroom_repository.dart';
 
+import 'models/classroom_model.dart';
+import 'widgets/default_input.dart';
+
 class ClassroomModal extends StatefulWidget {
   const ClassroomModal({super.key});
 
@@ -12,15 +15,24 @@ class _ClassroomModalState extends State<ClassroomModal> {
   bool projector = false;
   bool television = false;
   bool airConditioning = false;
+  bool leftHandedDeks = false;
+  bool handcapDesk = false;
+
+  // TODO: implementar gerenciamento de estado usando provider para conseguir atualizar somente o switch, sem rebuildar a tela inteira;
+  // TODO: componentizar os switch's
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
       future: ClassroomRepository().fetchAllClassrooms(),
       builder: (context, snapshot) {
+        print('snapshot.data: $snapshot.data');
 
-        print(snapshot);
+        List<ClassroomModel> classroomList = [];
 
+        if (snapshot.data != null && snapshot.data!.isNotEmpty) {
+          classroomList = snapshot.data as List<ClassroomModel>;
+        }
 
         return Dialog(
           alignment: Alignment.centerLeft,
@@ -44,7 +56,7 @@ class _ClassroomModalState extends State<ClassroomModal> {
                           fixedSize: WidgetStatePropertyAll(Size(16, 16)),
                         ),
                         onPressed: () {
-                          print('cliquei');
+                          // print('cliquei');
                         },
                         icon: Icon(Icons.close, size: 16),
                       ),
@@ -54,93 +66,9 @@ class _ClassroomModalState extends State<ClassroomModal> {
                       child: Row(
                         spacing: 20,
                         children: [
-                          SizedBox(
-                            width: 150,
-                            child: TextField(
-                              decoration: InputDecoration(
-                                label: Text(
-                                  'Sala',
-                                  style: TextStyle(
-                                    color: Color(0xff2b4612),
-                                    fontSize: 16,
-                                  ),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Color(0xff2b4612),
-                                  ),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Color(0xff2b4612),
-                                  ),
-                                ),
-                                border: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Color(0xff2b4612),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            width: 150,
-                            child: TextField(
-                              decoration: InputDecoration(
-                                label: Text(
-                                  'Capacidade',
-                                  style: TextStyle(
-                                    color: Color(0xff2b4612),
-                                    fontSize: 16,
-                                  ),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Color(0xff2b4612),
-                                  ),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Color(0xff2b4612),
-                                  ),
-                                ),
-                                border: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Color(0xff2b4612),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            width: 150,
-                            child: TextField(
-                              decoration: InputDecoration(
-                                label: Text(
-                                  'Computadores',
-                                  style: TextStyle(
-                                    color: Color(0xff2b4612),
-                                    fontSize: 16,
-                                  ),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Color(0xff2b4612),
-                                  ),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Color(0xff2b4612),
-                                  ),
-                                ),
-                                border: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Color(0xff2b4612),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
+                          DefaultInput(label: 'Sala'),
+                          DefaultInput(label: 'Capacidade'),
+                          DefaultInput(label: 'Computadores'),
                         ],
                       ),
                     ),
@@ -237,11 +165,11 @@ class _ClassroomModalState extends State<ClassroomModal> {
                               Transform.scale(
                                 scale: 0.6,
                                 child: Switch(
-                                  value: airConditioning,
+                                  value: leftHandedDeks,
                                   activeColor: Color(0xff2b4612),
                                   onChanged: (bool value) {
                                     setState(() {
-                                      airConditioning = value;
+                                      leftHandedDeks = value;
                                     });
                                   },
                                 ),
@@ -260,11 +188,11 @@ class _ClassroomModalState extends State<ClassroomModal> {
                               Transform.scale(
                                 scale: 0.6,
                                 child: Switch(
-                                  value: airConditioning,
+                                  value: handcapDesk,
                                   activeColor: Color(0xff2b4612),
                                   onChanged: (bool value) {
                                     setState(() {
-                                      airConditioning = value;
+                                      handcapDesk = value;
                                     });
                                   },
                                 ),
@@ -297,14 +225,24 @@ class _ClassroomModalState extends State<ClassroomModal> {
                       ),
                     ),
                     Expanded(
-                      child: ListView.builder(
-                        itemBuilder: (context, index) {
-                          return ListTile(
-                            title: Text('Teste'),
-                            tileColor: Colors.grey,
-                          );
-                        },
-                      ),
+                      child:
+                          snapshot.connectionState == ConnectionState.waiting
+                              ? Center(child: CircularProgressIndicator())
+                              : ListView.builder(
+                                itemCount: classroomList.length,
+                                itemBuilder: (context, index) {
+                                  return ListTile(
+                                    trailing: IconButton(
+                                      onPressed: () {},
+                                      icon: Icon(Icons.remove_red_eye_outlined),
+                                    ),
+                                    title: Text(
+                                      '${classroomList[index].classroom}',
+                                    ),
+                                    tileColor: Colors.grey,
+                                  );
+                                },
+                              ),
                     ),
                   ],
                 ),
